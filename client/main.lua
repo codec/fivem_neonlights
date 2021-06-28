@@ -6,19 +6,12 @@ AddEventHandler('neonlights:toggle', function()
   local playerPed = PlayerPedId()
   local vehicle = GetVehiclePedIsIn(playerPed, false)
   local driverPed = GetPedInVehicleSeat(vehicle, -1)
+  local neonlightsShould = (not neonlightsOn and true or false)
 
   -- vehicle has neons and player is the driver
   if IsVehicleNeonLightEnabled(vehicle, 1) and driverPed == playerPed then
-    -- are the lights on already?
-    if neonlightsOn then
-      DisableVehicleNeonLights(vehicle, false)
-      neonlightsOn = false
-    else
-      DisableVehicleNeonLights(vehicle, true)
-      neonlightsOn = true
-    end
-  else
-    -- no neonlight installed. do nothing
+    DisableVehicleNeonLights(vehicle, neonlightsShould)
+    neonlightsOn = neonlightsShould
   end
 end)
 
@@ -26,7 +19,10 @@ end)
 Citizen.CreateThread(
   function()
     while true do
-      -- player pressed CTRL+G
+      -- player pressed CTRL+H ... this will also toggle normal headlights
+      -- if IsControlPressed(0, 132) and IsControlJustReleased(0, 74) then
+
+      -- CTRL+G
       if IsControlPressed(0, 132) and IsControlJustReleased(0, 47) then
         TriggerEvent('neonlights:toggle')
       end
